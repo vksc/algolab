@@ -81,6 +81,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="quiz.h" />
     <ClInclude Include="sorting.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
