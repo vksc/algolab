@@ -59,16 +59,28 @@ namespace data
 
 		void addNode(const T& data, node** root)
 		{
-			if (*root)
+			node* newNode = new node(data);
+			node* newParent = nullptr;
+			node* parentCandidate = *root;
+
+			while (parentCandidate != nullptr)
 			{
-				if (data < (*root)->data)
-					addNode(data, &((*root)->left));
+				newParent = parentCandidate;
+
+				if (data < newParent->data)
+					parentCandidate = parentCandidate->left;
 				else
-					addNode(data, &((*root)->right));
+					parentCandidate = parentCandidate->right;
 			}
+
+			if (!newParent)
+				*root = newNode;
 			else
 			{
-				*root = new node(data);
+				if (data < newParent->data)
+					newParent->left = newNode;
+				else
+					newParent->right = newNode;
 			}
 		}
 
