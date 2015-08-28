@@ -6,11 +6,15 @@
 
 #include <vector>
 #include <list>
+#include <map>
 #include <functional>
 #include <iterator>
+#include <string>
+#include <sstream>
 
 #include "sorting.h"
 #include "quiz.h"
+#include "data.h"
 
 template <bool horz = true, typename T>
 void print(const T& container, bool start_section = false)
@@ -54,6 +58,8 @@ struct test_data
 
 	test_data(int k) : key(k), data(0) {}
 	test_data(int k, char c) : key(k), data(c) {}
+
+	friend std::ostream& operator << (std::ostream& ostr, const test_data& v);
 };
 
 bool operator < (const test_data& rhs, const test_data& lhs)
@@ -66,8 +72,7 @@ bool operator > (const test_data& rhs, const test_data& lhs)
 	return rhs.key > lhs.key;
 }
 
-template <typename ostream_t>
-ostream_t& operator << (ostream_t& ostr, const test_data& v)
+std::ostream& operator << (std::ostream& ostr, const test_data& v)
 {
 	ostr << v.key;
 
@@ -77,13 +82,105 @@ ostream_t& operator << (ostream_t& ostr, const test_data& v)
 	return ostr;
 }
 
-void test();
+void test_sorting()
+{
+	using test_values = std::vector<test_data>;
 
-int _tmain(int argc, _TCHAR* argv[])
+	test_values v = { { 5, 'a' }, 2, 4, { 5, 'c' }, 7, 6, 1, 3};
+	print(v);
+	sort::bubble_sort(v.begin(), v.end());
+
+	//sort::insertion_sort(v.begin(), v.end(), std::greater<>());
+	//sort::quick_sort(v.begin(), v.end());
+	sort::shell_sort(v.begin(), v.end());// , [](const test_data& v1, const test_data& v2) { return v1.key < v2.key;  });
+
+	print(v);
+}
+
+void test_quiz()
+{
+	using test_values = std::vector<test_data>;
+
+	test_values b1 = { 9, 5, 0, 0, 0, 0 };
+	test_values b2 = { 12, 6, 3, 1 };
+
+	print(b1, true);
+	print(b2);
+	quiz::inplace_merge_sorted(b1.begin(), std::next(b1.begin(), 2), b1.end(), b2.begin(), b2.end(), std::greater<>());
+	print(b1);
+
+	test_values b3 = { 9, 5 };
+	test_values b4 = { 12, 6, 3, 1 };
+	test_values b5;
+	quiz::my_merge_sorted(b3.begin(), b3.end(), b4.begin(), b4.end(), std::back_inserter(b5), std::greater<>());
+
+	print(b5, true);
+
+	std::string s1 = "hello dumb code !";
+	std::wstring s2 = L"Vasya was here today";
+	
+	quiz::reverse_words(s1.begin(), s1.end(), ' ');
+	std::cout << s1 << '\n';
+
+	quiz::reverse_words(s2.begin(), s2.end(), L' ');
+	std::wcout << s2 << '\n';
+}
+
+template <typename Node, typename level_map>
+void get_tree_levels(const Node& node, int level, int pos, int dir, level_map& lm)
+{
+	if (lm[level].empty())
+		lm[level].insert(0, 250, ' ');
+
+	std::ostringstream stm;
+	stm << node.data;
+	std::cout << level << " * " << node.data << '\n';
+	lm[level].insert(pos, stm.str());
+
+	if (node.left)
+		get_tree_levels(*node.left, level + 1, dir <= 0 ? pos - 6 : pos - 4, dir ? dir : -1, lm);
+	if (node.right)
+		get_tree_levels(*node.right, level + 1, dir >= 0 ? pos + 6 : pos + 4, dir ? dir : 1, lm);
+
+	std::cout << std::endl;
+}
+
+void test_data()
+{
+	using intree = data::bintree<int>;
+
+	intree tree;
+	tree.addNode(5);
+	tree.addNode(3);
+	tree.addNode(7);
+	tree.addNode(1);
+	tree.addNode(4);
+	tree.addNode(6);
+	tree.addNode(8);
+	tree.addNode(10);
+	tree.addNode(12);
+	tree.addNode(13);
+
+	tree.visit([&tree](const intree::node& root)
+	{ 
+		std::map<int, std::string> lm;
+		get_tree_levels(root, 0, 50, false, lm);
+
+		for (size_t i = 0; i < lm.size(); ++i)
+		{
+			std::cout << lm[i] << std::endl;
+		}
+
+	});
+}
+
+int main(int argc, char* argv[])
 {
 	try
 	{
-		test();
+		test_sorting();
+		test_quiz();
+		test_data();
 	}
 	catch (std::exception e)
 	{
@@ -94,46 +191,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 
 }
-
-void test()
-{
-	using test_values = std::vector<test_data>;
-
-	test_values v = { { 5, 'a' }, 2, 4, { 5, 'c' }, 7, 6, 1, 3};
-	print(v);
-
-	//sort::bubble_sort(v.begin(), v.end());
-	//sort::insertion_sort(v.begin(), v.end(), std::greater<>());
-	//sort::quick_sort(v.begin(), v.end());
-	sort::shell_sort(v.begin(), v.end());// , [](const test_data& v1, const test_data& v2) { return v1.key < v2.key;  });
-
-	print(v);
-
-	test_values a1 = { 2, 3, 5, 7, 9, 0, 0, 0, 0 };
-	test_values a2 = { 1, 3, 8, 12 };
-	
-	print(a1, true);
-	print(a2);
-	quiz::inplace_merge_sorted(a1.begin(), std::next(a1.begin(), 5), a1.end(), a2.begin(), a2.end());
-
-	print(a1);
-
-	/*test_values b1 = { 9, 7, 5, 3, 2, 0, 0, 0, 0 };
-	test_values b2 = { 12, 8, 3, 1 };
-*/
-	test_values b1 = { 9, 5, 0, 0, 0, 0 };
-	test_values b2 = { 12, 6, 3, 1 };
-
-	print(b1, true);
-	print(b2);
-	quiz::inplace_merge_sorted(b1.begin(), std::next(b1.begin(), 2), b1.end(), b2.begin(), b2.end(), std::greater<>());
-	print(b1);
-
-	test_values b3 = { 9, 5};
-	test_values b4 = { 12, 6, 3, 1 };
-	test_values b5;
-	quiz::my_merge_sorted(b3.begin(), b3.end(), b4.begin(), b4.end(), std::back_inserter(b5), std::greater<>());
-
-	print(b5, true);
-}
-

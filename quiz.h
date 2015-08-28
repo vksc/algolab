@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <string>
+
 #pragma once
 
 namespace quiz
@@ -77,4 +79,23 @@ namespace quiz
 		}
 	}
 
+	template <typename FwdIt, typename value_type = std::iterator_traits<FwdIt>::value_type value_type>
+	void reverse_words(FwdIt first, FwdIt last, const value_type& separator)
+	{
+		if (first == last)
+			return;
+
+		for (FwdIt from = first, to = std::find(from, last, separator); from != last; to = std::find(from, last, separator))
+		{
+			std::reverse(from, to);
+			
+			if (to == last)
+			{
+				std::reverse(first, last);
+				from = last;
+			}
+			else
+				from = std::next(to, 1);
+		}		
+	}
 }
