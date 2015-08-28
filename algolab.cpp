@@ -41,7 +41,7 @@ void print(FwdIt first, FwdIt middle, FwdIt last)
 	{
 		std::cout << *i << delim;
 	}
-	
+
 	std::cout << " <---> " << delim;
 	for (auto i = middle; i != last; ++i)
 	{
@@ -106,19 +106,19 @@ void test_quiz()
 
 	print(b1, true);
 	print(b2);
-	quiz::inplace_merge_sorted(b1.begin(), std::next(b1.begin(), 2), b1.end(), b2.begin(), b2.end(), std::greater<>());
+	quiz::inplace_merge_sorted(b1.begin(), std::next(b1.begin(), 2), b1.end(), b2.begin(), b2.end(), std::greater<test_values::value_type>());
 	print(b1);
 
 	test_values b3 = { 9, 5 };
 	test_values b4 = { 12, 6, 3, 1 };
 	test_values b5;
-	quiz::my_merge_sorted(b3.begin(), b3.end(), b4.begin(), b4.end(), std::back_inserter(b5), std::greater<>());
+	quiz::my_merge_sorted(b3.begin(), b3.end(), b4.begin(), b4.end(), std::back_inserter(b5), std::greater<test_values::value_type>());
 
 	print(b5, true);
 
 	std::string s1 = "hello dumb code !";
 	std::wstring s2 = L"Vasya was here today";
-	
+
 	quiz::reverse_words(s1.begin(), s1.end(), ' ');
 	std::cout << s1 << '\n';
 
@@ -162,7 +162,7 @@ void test_data()
 	tree.addNode(13);
 
 	tree.visit([&tree](const intree::node& root)
-	{ 
+	{
 		std::map<int, std::string> lm;
 		get_tree_levels(root, 0, 50, false, lm);
 

@@ -27,7 +27,7 @@ namespace quiz
 			throw std::invalid_argument("Second container is too big for merging.");
 
 		using RevIt = std::reverse_iterator<RanIt>;
-		
+
 		RevIt i1(lastSorted);
 		RevIt rlast1(first1);
 
@@ -79,7 +79,7 @@ namespace quiz
 		}
 	}
 
-	template <typename FwdIt, typename value_type = std::iterator_traits<FwdIt>::value_type value_type>
+	template <typename FwdIt, typename value_type = typename std::iterator_traits<FwdIt>::value_type>
 	void reverse_words(FwdIt first, FwdIt last, const value_type& separator)
 	{
 		if (first == last)
@@ -88,7 +88,7 @@ namespace quiz
 		for (FwdIt from = first, to = std::find(from, last, separator); from != last; to = std::find(from, last, separator))
 		{
 			std::reverse(from, to);
-			
+
 			if (to == last)
 			{
 				std::reverse(first, last);
@@ -96,6 +96,6 @@ namespace quiz
 			}
 			else
 				from = std::next(to, 1);
-		}		
+		}
 	}
 }

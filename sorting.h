@@ -46,16 +46,16 @@ namespace sort
 		auto i_pivot = pfn(first, last);
 		auto pivot = *i_pivot;
 
-		auto partitioner1 = [&pivot, &lessThan](const std::iterator_traits<FwdIt>::value_type& v)->bool
+		auto partitioner1 = [&pivot, &lessThan](const typename std::iterator_traits<FwdIt>::value_type& v)->bool
 		{	return lessThan(v, pivot); };
 
-		auto partitioner2 = [&pivot, &lessThan](const std::iterator_traits<FwdIt>::value_type& v)->bool
+		auto partitioner2 = [&pivot, &lessThan](const typename std::iterator_traits<FwdIt>::value_type& v)->bool
 		{	return !lessThan(pivot, v); };
 
 		// Divide sorted interval on two partitions according to given predicate
 		auto middle1 = std::partition(first, last, partitioner1);
 
-		// For 'upper' interval, use partition to move pivot value(s) to the middle1 position (i.e. placed at interval's start). 
+		// For 'upper' interval, use partition to move pivot value(s) to the middle1 position (i.e. placed at interval's start).
 		// As a result, we will have following partition: begin,...,middle1, middle2,....end.
 		// And following intervals will be processed recursively: [begin, middle1), [middle2, end).
 		auto middle2 = std::partition(middle1, last, partitioner2);
