@@ -130,7 +130,7 @@ template <typename Node, typename level_map>
 void get_tree_levels(const Node& node, int level, int pos, int dir, level_map& lm)
 {
 	if (lm[level].empty())
-		lm[level].insert(0, 250, ' ');
+		lm[level].insert(0, 170, ' ');
 
 	std::ostringstream stm;
 	stm << node.data;
@@ -138,30 +138,70 @@ void get_tree_levels(const Node& node, int level, int pos, int dir, level_map& l
 	lm[level].insert(pos, stm.str());
 
 	if (node.left)
-		get_tree_levels(*node.left, level + 1, dir <= 0 ? pos - 6 : pos - 4, dir ? dir : -1, lm);
+		get_tree_levels(*node.left, level + 1, dir <= 0 ? pos - 8 : pos - 3, dir ? dir : -1, lm);
 	if (node.right)
-		get_tree_levels(*node.right, level + 1, dir >= 0 ? pos + 6 : pos + 4, dir ? dir : 1, lm);
+		get_tree_levels(*node.right, level + 1, dir >= 0 ? pos + 8 : pos + 3, dir ? dir : 1, lm);
 
 	std::cout << std::endl;
+}
+
+template <bool presort = true, typename FwdIt>
+void balance_bst_data(FwdIt first, FwdIt last)
+{
+	if (first == last)
+		return;
+
+	if (presort)
+		std::sort(first, last);
+
+	size_t len = std::distance(first, last);
+	auto mid = std::next(first, (len / 2));
+
+	if (mid == last)
+		return;
+
+	auto first2 = mid + 1;
+	auto l2 = std::distance(first, mid);
+	std::cout << *mid << std::endl;
+	first = std::rotate(first, mid, first2);
+
+	balance_bst_data<false>(first, first + l2);
+	balance_bst_data<false>(first2, last);
 }
 
 void test_data()
 {
 	using intree = data::bintree<int>;
+	std::vector<int> v1, v2;
 
+	v1 = { 5, 3, 7, 1, 4, 6, 8, 10, 12 };
+	
 	intree tree;
-	tree.addNode(5);
-	tree.addNode(3);
-	tree.addNode(7);
-	tree.addNode(1);
-	tree.addNode(4);
-	tree.addNode(6);
-	tree.addNode(8);
-	tree.addNode(10);
-	tree.addNode(12);
-	tree.addNode(13);
+	for (auto i : v1)
+		tree.addNode(i);
 
-	tree.visit([&tree](const intree::node& root)
+	tree.visit([](const intree::node& root)
+	{
+		std::map<int, std::string> lm;
+		get_tree_levels(root, 0, 50, false, lm);
+
+		for (size_t i = 0; i < lm.size(); ++i)
+		{
+			std::cout << lm[i] << std::endl;
+		}
+
+	});
+
+	v2 =  { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+	//v2 = v1;
+	intree tree2;
+
+	balance_bst_data(v2.begin(), v2.end());
+	for (auto i : v2)
+		tree2.addNode(i);
+
+	tree2.visit([](const intree::node& root)
 	{
 		std::map<int, std::string> lm;
 		get_tree_levels(root, 0, 50, false, lm);
