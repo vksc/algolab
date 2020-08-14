@@ -117,7 +117,7 @@ void test_quiz()
 	print(b5, true);
 
 	std::string s1 = "hello dumb code !";
-	std::wstring s2 = L"Vasya was here today";
+	std::wstring s2 = L"First second third";
 
 	quiz::reverse_words(s1.begin(), s1.end(), ' ');
 	std::cout << s1 << '\n';
